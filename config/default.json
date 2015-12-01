@@ -1,0 +1,28 @@
+{
+
+  "SERVER_PORT" : "3002",
+  "LOG_PATH" : "./log",
+
+  "DB_URL" : "ds051933.mongolab.com:51933/gl",
+
+  "TOKEN" : {
+    "secret": "UzI1NiJ9.ZmQxODkNDI2.1Qk9HizDkuwnqAEKW",
+    "expire": 72000
+  },
+
+  "ERRORS" : {
+
+    "SERVER_ERROR" : { "code" : "3", "message" : "Server error",
+            "url" : "https://doc.site.url/errors/3", "status" : "500" },
+
+    "UNKNOWN_ERROR" : { "code" : "9", "message" : "Unknown error",
+            "developerMessage" : "The error is unknown. We already know about it and try to find why it happened.",
+            "url" : "https://doc.site.url/errors/9", "status" : "500" },
+
+    "ACCESS_DENIED" : { "code" : "21", "message" : "Acess denied", 
+            "developerMessage" : "Acess to this resource is denied. You can contact administrator in case of mistake.",
+            "url" : "https://doc.site.url/errors/21", "status" : "403" },
+
+  }
+
+}
