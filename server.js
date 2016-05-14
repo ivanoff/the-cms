@@ -4,20 +4,23 @@ var config = require('config');
 var express = require('express');
 var bodyParser = require('body-parser');
 var bunyan = require('bunyan');
-
-var db  = require('./lib/db');
+var swig = require('swig');
+var logger = require('morgan');
 
 var app = new express();
 
-var DB_URL   = config.get( 'DB_URL' ) || process.env.DB_URL;
-if( process.env.DB_AUTH ) DB_URL = 'mongodb://'+process.env.DB_AUTH+'@'+DB_URL;
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
+// NOTE: You should always cache templates in a production environment.
+// Don't leave both of these to `false` in production!
+app.set('view cache', false);
+swig.setDefaults({ cache: false });
 
-// config part
 var PORT     = process.env.SERVER_PORT || config.get( 'SERVER_PORT' ) || 3000,
     LOG_PATH = process.env.LOG_PATH    || config.get( 'LOG_PATH' )    || './log',
     ERROR    = config.get( 'ERRORS' );
 
-// loging part
 var log = bunyan.createLogger( { 
   name: "server",
   port: PORT,
@@ -27,27 +30,17 @@ var log = bunyan.createLogger( {
   ]
 });
 
-// error and nice loging function
-var error_and_log = function ( error, res ){
-    var e = error || ERROR.UNKNOWN_ERROR;
-    // global error goes to developerMessage
-    if( error.errmsg ) {
-        e = ERROR.SERVER_ERROR;
-        e.developerMessage = error;
-    }
-    res.status( e.status || 400 );
-    log.error( e );
-    res.json( e );
-    return e;
-}
-
-app.use( function( req, res, next ){ 
-    req.db    = db.get(); 
-    req.error = function( error ) { error_and_log ( error, res ) };
-    next();
-});
-
+app.use(logger('dev'));
+app.use(express.static(__dirname + '/public'));
 app.use( bodyParser.urlencoded({ extended: true }) );
+
+require("the-cms-l")(app);
+//app.use( '/l', require("the-cms-l") );
+//require("the-cms-l")
+
+// good
+//var r = 'l';
+//app.use('/'+r, require('the-cms-'+r)());
 
 require("./routes/index")(app);
 
@@ -58,15 +51,11 @@ require("fs").readdirSync(normalizedPath).forEach(function(file) {
 });
 
 exports.start = function( done ) {
-    aws.connect( AWS, function( err, next ){  });
-    db.connect( DB_URL, function( err, next ) {
-        if ( err ) { return next( err ) }
-        this.server = app.listen( PORT, function() {
-            log.info({pid:1},'['+PORT+'] server started');
-            console.log( 'Listening on port ' + PORT + '...' );
-            done();
-        });
-    }.bind(this))
+    this.server = app.listen( PORT, function() {
+        log.info({pid:1},'['+PORT+'] server started');
+        console.log( 'Listening on port ' + PORT + '...' );
+        done();
+    });
 }
 
 exports.stop = function( ) {

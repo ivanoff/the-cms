@@ -1,6 +1,0 @@
-while true; do
-    echo "STARTING THE-CMS"
-    node ./index.js
-    echo "PRESS ENTER TO RESTART OR CTRL-C TO EXIT"
-    read
-done

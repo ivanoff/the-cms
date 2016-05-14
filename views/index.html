@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+
+{% block title %}Index{% endblock %}
+
+{% block name %}
+  New image :: {{ name }}
+{% endblock %}
+
+{% block image %}{{ image || 'original.jpg'}}{% endblock %}

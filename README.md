@@ -1,7 +1,5 @@
 # The-CMS
 
-YACMS
-
 
 ## Created by
 
