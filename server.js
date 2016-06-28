@@ -42,6 +42,8 @@ require("the-cms-l")(app);
 //var r = 'l';
 //app.use('/'+r, require('the-cms-'+r)());
 
+require('the-cms-login')(app, '/login');
+
 require("./routes/index")(app);
 
 // Get the rest routes
